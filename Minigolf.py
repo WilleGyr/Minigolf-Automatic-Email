@@ -1,18 +1,18 @@
 import gspread
-import os
 from email.message import EmailMessage
-import ssl
 from email.utils import formataddr
 import smtplib
 import datetime
 import base64
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
 
 today = datetime.datetime.today()
 
-with open ('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.txt', 'r') as f:
-    LastWeek = f.readlines()
+# Läsa in förra veckans data
+with open ('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.json', 'r') as f:
+    LastWeek = json.load(f)
     f.close()
 
 Mail = ["","","","","","","",""]
@@ -20,59 +20,61 @@ Mail = ["","","","","","","",""]
 def CheckLastWeek():
     # Willy rekord
     if float(LastWeek[2]) > WScore:
-        Mail[0] = f"Willy slog sitt rekord på <b>{str(LastWeek[2].strip())}</b> och fick <b>{WScore}</b>"
+        Mail[0] = f"Willy slog sitt rekord på <b>{str(LastWeek[2])}</b> och fick <b>{WScore}</b>"
     else:
-        Mail[0] = f"Willys rekord är fortfarande <b>{str(LastWeek[2].strip())}</b>"
+        Mail[0] = f"Willys rekord är fortfarande <b>{str(LastWeek[2])}</b>"
     
     # Willy snitt
-    if float(LastWeek[5].replace(',', '.').strip()) == WSnitt:
-        Mail[1] = f"Willys snitt är fortfarande <b>{str(LastWeek[5].strip())}</b>"
-    if float(LastWeek[5].replace(',', '.').strip()) > WSnitt:
-        Mail[1] = f"Willy minskade sitt snitt från <b>{str(LastWeek[5].strip())}</b> till <b>{WSnitt}</b>"
-    if float(LastWeek[5].replace(',', '.').strip()) < WSnitt:
-        Mail[1] = f"Willy ökade sitt snitt från <b>{str(LastWeek[5].strip())}</b> till <b>{WSnitt}</b>"
+    if float(LastWeek[5]) == WSnitt:
+        Mail[1] = f"Willys snitt är fortfarande <b>{str(LastWeek[5])}</b>"
+    if float(LastWeek[5]) > WSnitt:
+        Mail[1] = f"Willy minskade sitt snitt från <b>{str(LastWeek[5])}</b> till <b>{WSnitt}</b>"
+    if float(LastWeek[5]) < WSnitt:
+        Mail[1] = f"Willy ökade sitt snitt från <b>{str(LastWeek[5])}</b> till <b>{WSnitt}</b>"
     
     # Adri rekord
     if float(LastWeek[3]) > AScore:
-        Mail[2] = f"Adri slog sitt rekord på <b>{str(LastWeek[3].strip())}</b> och fick <b>{AScore}</b>"
+        Mail[2] = f"Adri slog sitt rekord på <b>{str(LastWeek[3])}</b> och fick <b>{AScore}</b>"
     else:
-        Mail[2] = f"Adris rekord är fortfarande <b>{str(LastWeek[3].strip())}</b>"
+        Mail[2] = f"Adris rekord är fortfarande <b>{str(LastWeek[3])}</b>"
 
     # Adri snitt
-    if float(LastWeek[6].replace(',', '.').strip()) == ASnitt:
-        Mail[3] = f"Adris snitt är fortfarande <b>{str(LastWeek[6].strip())}</b>"
-    if float(LastWeek[6].replace(',', '.').strip()) > ASnitt:
-        Mail[3] = f"Adri minskade sitt snitt från <b>{str(LastWeek[3].strip())}</b> till <b>{ASnitt}</b>"
-    if float(LastWeek[6].replace(',', '.').strip()) < ASnitt:
-        Mail[3] = f"Adri ökade sitt snitt från <b>{str(LastWeek[3].strip())}</b> till <b>{ASnitt}</b>"
+    if float(LastWeek[6]) == ASnitt:
+        Mail[3] = f"Adris snitt är fortfarande <b>{str(LastWeek[6])}</b>"
+    if float(LastWeek[6]) > ASnitt:
+        Mail[3] = f"Adri minskade sitt snitt från <b>{str(LastWeek[6])}</b> till <b>{ASnitt}</b>"
+    if float(LastWeek[6]) < ASnitt:
+        Mail[3] = f"Adri ökade sitt snitt från <b>{str(LastWeek[6])}</b> till <b>{ASnitt}</b>"
 
     # Dennis rekord
     if float(LastWeek[4]) > DScore:
-        Mail[4] = f"Dennis slog sitt rekord på <b>{str(LastWeek[4].strip())}</b> och fick <b>{DScore}</b>"
+        Mail[4] = f"Dennis slog sitt rekord på <b>{str(LastWeek[4])}</b> och fick <b>{DScore}</b>"
     else:
-        Mail[4] = f"Dennis rekord är fortfarande <b>{str(LastWeek[4].strip())}</b>"
+        Mail[4] = f"Dennis rekord är fortfarande <b>{str(LastWeek[4])}</b>"
     
     # Dennis snitt
-    if float(LastWeek[7].replace(',', '.').strip()) == DSnitt:
-        Mail[5] = f"Dennis snitt är fortfarande <b>{str(LastWeek[7].strip())}</b>"
-    if float(LastWeek[7].replace(',', '.').strip()) > DSnitt:
-        Mail[5] = f"Dennis minskade sitt snitt från <b>{str(LastWeek[7].strip())}</b> till <b>{DSnitt}</b>"
-    if float(LastWeek[7].replace(',', '.').strip()) < DSnitt:
-        Mail[5] = f"Dennis ökade sitt snitt från <b>{str(LastWeek[7].strip())}</b> till <b>{DSnitt}</b>"
+    if float(LastWeek[7]) == DSnitt:
+        Mail[5] = f"Dennis snitt är fortfarande <b>{str(LastWeek[7])}</b>"
+    if float(LastWeek[7]) > DSnitt:
+        Mail[5] = f"Dennis minskade sitt snitt från <b>{str(LastWeek[7])}</b> till <b>{DSnitt}</b>"
+    if float(LastWeek[7]) < DSnitt:
+        Mail[5] = f"Dennis ökade sitt snitt från <b>{str(LastWeek[7])}</b> till <b>{DSnitt}</b>"
 
-    if float(LastWeek[8].replace(',', '.').strip()) == TotaltSnitt:
-        Mail[6] = f"Ert gemensamma snitt är fortfarande <b>{str(LastWeek[8].strip())}</b>"
-    if float(LastWeek[8].replace(',', '.').strip()) > TotaltSnitt:
-        Mail[6] = f"Ert gemensamma snitt minskade från <b>{str(LastWeek[8].strip())}</b> till <b>{TotaltSnitt}</b>"
-    if float(LastWeek[8].replace(',', '.').strip()) < TotaltSnitt:
-        Mail[6] = f"Ert gemensamma snitt ökade från <b>{str(LastWeek[8].strip())}</b> till <b>{TotaltSnitt}</b>"
-    
+    # Totala snittet
+    if float(LastWeek[8]) == TotaltSnitt:
+        Mail[6] = f"Ert gemensamma snitt är fortfarande <b>{str(LastWeek[8])}</b>"
+    if float(LastWeek[8]) > TotaltSnitt:
+        Mail[6] = f"Ert gemensamma snitt minskade från <b>{str(LastWeek[8])}</b> till <b>{TotaltSnitt}</b>"
+    if float(LastWeek[8]) < TotaltSnitt:
+        Mail[6] = f"Ert gemensamma snitt ökade från <b>{str(LastWeek[8])}</b> till <b>{TotaltSnitt}</b>"
 
+# Google Sheets API
 sa = gspread.service_account()
 sh = sa.open("Minigolf scoreboard")
 MOS = sh.worksheet("MOS")
 TOTAL = sh.worksheet("Total")
 
+# Plotta snitt per hål
 def PlotSnitt():
     SnittLista = MOS.get('U25:X42')
 
@@ -105,6 +107,7 @@ def PlotSnitt():
     # Save the figure to a file
     plt.savefig('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/SnittGraf.png', dpi=300, bbox_inches='tight')
 
+# Göra om bilden till Base64
 def ImageToBase64():
     with open('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/SnittGraf.png', 'rb') as img:
         base64_image = base64.b64encode(img.read()).decode()
@@ -113,47 +116,49 @@ def ImageToBase64():
 PlotSnitt()
 base64_image = ImageToBase64()
 
+# Hämta Topplistan
 Topplista = MOS.get('C31:E40')
 
-def ReplaceComma():
-    for i in LastWeek:
-        i = i.replace(',', '.').strip()
-
+# Hämta data från MOS
+# Score
 WScore = MOS.acell('C25').value
 WScore = int(WScore.replace(',', '.'))
 AScore = MOS.acell('D25').value
 AScore = int(AScore.replace(',', '.'))
 DScore = MOS.acell('E25').value
 DScore = int(DScore.replace(',', '.'))
-
+# Snitt
 WSnitt = MOS.acell('V43').value
 WSnitt = float(WSnitt.replace(',', '.'))
 ASnitt = MOS.acell('W43').value
 ASnitt = float(ASnitt.replace(',', '.'))
 DSnitt = MOS.acell('X43').value
 DSnitt = float(DSnitt.replace(',', '.'))
-
+# Totalt snitt
 TotaltSnitt = MOS.acell('M43').value
 TotaltSnitt = float(TotaltSnitt.replace(',', '.'))
-
+# Hole-In-One
 AntalHIO = MOS.acell('D43').value
 AntalHIO = int(AntalHIO)
-
+# Antal Slag
 AntalSlag = MOS.acell('K51').value
 AntalSlag = int(AntalSlag.replace('\xa0', '').replace(' ', ''))
 
+# Hämta förra veckans senaste cell
 CurrentCell = MOS.cell(21, int(LastWeek[11]))
 OldCell = CurrentCell
 
+# Hitta senaste cellen
 while CurrentCell.value != None:
-    #print(CurrentCell.value)
     CurrentCell = MOS.cell(CurrentCell.row, CurrentCell.col + 1)
 
+# Räkna ut veckans snitt
 def GetAverage(startcell, stopcell):
     start = startcell.row, startcell.col
     stop = stopcell.row, stopcell.col
     sum = 0
     count = 0
+    # Loopa igenom cellerna och räkna ut summan och antalet celler
     for row in range(start[0], stop[0] + 1):
         for col in range(start[1], stop[1] + 1):
             cell = MOS.cell(row, col)
@@ -163,8 +168,9 @@ def GetAverage(startcell, stopcell):
     if count > 0:
         return sum / count
     else:
-        return 0  # or return 0, depending on the desired behavior when there are no values
+        return 0
 
+# Räkna ut veckans snitt
 VeckoSnitt = GetAverage(OldCell, CurrentCell)
 VeckoSnitt = round(VeckoSnitt, 1)
 
@@ -172,14 +178,15 @@ VeckoSnitt = round(VeckoSnitt, 1)
 
 Rundor = int(TOTAL.acell('H4').value)
 
-#ReplaceComma()
 CheckLastWeek()
 
-
+# Skicka mail
 def sendMail(EMAIL_RECIEVER):
+    # Inloggning
     EMAIL_ADDRESS = 'autosendminigolfgyrulf@gmail.com'
     EMAIL_PASSWORD = 'nwgy ludp gxcp lazc'
     
+    # Skapa mail
     msg = EmailMessage()
     msg['Subject'] = f'Summering Minigolf vecka {str(today.isocalendar()[1])}'
     msg['From'] = EMAIL_ADDRESS
@@ -399,38 +406,21 @@ def sendMail(EMAIL_RECIEVER):
         </body>
         </html>
     ''', subtype='html')
-    
+
+    # Skicka mail
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
         print("Successfully sent the mail.")
 
-with open ('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.txt', 'w') as f:
-    f.write(str(Rundor))
-    f.write('\n')
-    f.write(str(Topplista[0][2]))
-    f.write('\n')
-    f.write(str(WScore))
-    f.write('\n')
-    f.write(str(AScore))
-    f.write('\n')
-    f.write(str(DScore))
-    f.write('\n')
-    f.write(str(WSnitt))
-    f.write('\n')
-    f.write(str(ASnitt))
-    f.write('\n')
-    f.write(str(DSnitt))
-    f.write('\n')
-    f.write(str(TotaltSnitt))
-    f.write('\n')
-    f.write(str(AntalHIO))
-    f.write('\n')
-    f.write(str(AntalSlag))
-    f.write("\n")
-    f.write(str(CurrentCell.col))
+# Uppdatera förra veckans data
+data = [int(Rundor), int(Topplista[0][2]), int(WScore), int(AScore), int(DScore), float(WSnitt), float(ASnitt), float(DSnitt), float(TotaltSnitt), int(AntalHIO), int(AntalSlag), int(CurrentCell.col)]
+# Skriv till fil
+with open('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.json', 'w') as f:
+    json.dump(data, f)
     f.close()
 
+# Skicka mail till alla
 sendMail('william.gyrulf@hotmail.com')
-sendMail('adriandushi@outlook.com')
-sendMail('dennis.tollofsen04@gmail.com')
+#sendMail('adriandushi@outlook.com')
+#sendMail('dennis.tollofsen04@gmail.com')
