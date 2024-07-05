@@ -421,6 +421,4 @@ with open('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.json', 
     f.close()
 
 # Skicka mail till alla
-sendMail('william.gyrulf@hotmail.com')
-#sendMail('adriandushi@outlook.com')
-#sendMail('dennis.tollofsen04@gmail.com')
+sendMail('x')
