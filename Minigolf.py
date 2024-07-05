@@ -11,7 +11,7 @@ import json
 today = datetime.datetime.today()
 
 # Läsa in förra veckans data
-with open ('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.json', 'r') as f:
+with open ('Path/To/Your/File/LastWeek.json', 'r') as f:
     LastWeek = json.load(f)
     f.close()
 
@@ -105,11 +105,11 @@ def PlotSnitt():
     plt.xticks(df['Hål'])
 
     # Save the figure to a file
-    plt.savefig('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/SnittGraf.png', dpi=300, bbox_inches='tight')
+    plt.savefig('Path/To/Your/File/SnittGraf.png', dpi=300, bbox_inches='tight')
 
 # Göra om bilden till Base64
 def ImageToBase64():
-    with open('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/SnittGraf.png', 'rb') as img:
+    with open('Path/To/Your/File/SnittGraf.png', 'rb') as img:
         base64_image = base64.b64encode(img.read()).decode()
     return base64_image
 
@@ -183,8 +183,8 @@ CheckLastWeek()
 # Skicka mail
 def sendMail(EMAIL_RECIEVER):
     # Inloggning
-    EMAIL_ADDRESS = 'autosendminigolfgyrulf@gmail.com'
-    EMAIL_PASSWORD = 'nwgy ludp gxcp lazc'
+    EMAIL_ADDRESS = 'Your Email'
+    EMAIL_PASSWORD = 'Your Password'
     
     # Skapa mail
     msg = EmailMessage()
@@ -416,9 +416,9 @@ def sendMail(EMAIL_RECIEVER):
 # Uppdatera förra veckans data
 data = [int(Rundor), int(Topplista[0][2]), int(WScore), int(AScore), int(DScore), float(WSnitt), float(ASnitt), float(DSnitt), float(TotaltSnitt), int(AntalHIO), int(AntalSlag), int(CurrentCell.col)]
 # Skriv till fil
-with open('C:/Users/willi/Desktop/Scripts/GoogleSheets/Minigolf/LastWeek.json', 'w') as f:
+with open('Path/To/Your/File/LastWeek.json', 'w') as f:
     json.dump(data, f)
     f.close()
 
 # Skicka mail till alla
-sendMail('x')
+sendMail('Reciever Adress')
